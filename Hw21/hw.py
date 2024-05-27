@@ -63,6 +63,10 @@ class Director:
     def make_dish(self, dishCreator):
         dishCreator.create_pasta()
         return str(dishCreator.pasta)
+        
+    # 3. Prototype
+    def copy(self):
+        return copy.deepcopy(self)
     
 if __name__ == "__main__":
     dish = Director().make_dish(FirstPasta())
