@@ -25,14 +25,14 @@ class Pasta:
 
 
 class PastaBuilder(ABC):
+    def __init__(self):
+        self.pasta = Pasta()
+
     @abstractmethod
     def create_pasta(self):
         pass
 
 class FirstPasta(PastaBuilder):
-    def __init__(self):
-        self.pasta = Pasta()
-    
     def create_pasta(self):
         self.pasta.type = 'Спагетти'
         self.pasta.sauce = 'Сырный'
@@ -40,9 +40,6 @@ class FirstPasta(PastaBuilder):
         self.pasta.additives.append('Мясные шарики')
 
 class SecondPasta(PastaBuilder):
-    def __init__(self):
-        self.pasta = Pasta()
-    
     def create_pasta(self):
         self.pasta.type = 'Каннеллони'
         self.pasta.sauce = 'Томатный'
@@ -50,9 +47,6 @@ class SecondPasta(PastaBuilder):
         self.pasta.additives.append('Томатный соус')
 
 class ThirdPasta(PastaBuilder):
-    def __init__(self):
-        self.pasta = Pasta()
-    
     def create_pasta(self):
         self.pasta.sauce = 'Базилик'
         self.pasta.filling = 'Какая-то №2'
