@@ -1,0 +1,224 @@
+Задача 1: =======================================
+-- Создание таблиц:
+
+    Create table "Authors" (
+    "id" INTEGER PRIMARY KEY,
+    "name" TEXT
+    );
+
+    Create table "Books" (
+    "id" INTEGER PRIMARY KEY,
+    "title" TEXT,
+    "author_id" INTEGER,
+    FOREIGN KEY ("author_id") REFERENCES "Authors"("id")
+    );
+
+    Create table "Reviews" (
+    "id" INTEGER PRIMARY KEY,
+    "content" TEXT,
+    "book_id" INTEGER,
+    FOREIGN KEY ("book_id") REFERENCES "Books"("id")
+    );
+
+    Insert into "Authors" ("name") values ('Лев Толстой');
+    Insert into "Authors" ("name") values ('Федор Достоевский');
+
+    Insert into "Books" ("title", "author_id") values ('Война и мир', 1);
+    Insert into "Books" ("title", "author_id") values ('Преступление и наказание', 2);
+
+    Insert into "Reviews" ("content", "book_id") values ('Прекрасная книга!', 1);
+    Insert into "Reviews" ("content", "book_id") values ('Очень глубокое произведение', 2);
+
+-- Запросы к таблицам:
+
+    1.  Select * from "Authors";
+
+    2.  Select * from "Books";
+
+    3.  Select * from "Reviews";
+
+    4.  Select "Books"."title", "Authors"."name"
+    from "Books"
+    left join "Authors" on "Books"."author_id" = "Authors"."id";
+
+    5.  Select "Reviews"."content", "Books"."title"
+    from "Reviews"
+    left join "Books" on "Reviews"."book_id" = "Books"."id";
+
+    6.  Select count(*) from "Authors";
+
+    7.  Select max("id") from "Books";
+
+    8.  Select "name", count("book_id")
+    from "Authors"
+    left join "Books" on "Authors"."id" = "Books"."author_id"
+    group by "name";
+
+    9.  Update "Authors"
+    set "name" = 'Антон Чехов'
+    where "id" = 2;
+
+    10. Update "Authors"
+    set "name" = 'Федор Достоевский'
+    where "id" = 2;
+
+Задача 2: =======================================
+-- Создание таблиц
+    CREATE TABLE Restaurant (
+        RestaurantID INT PRIMARY KEY,
+        Name VARCHAR(50),
+        Address VARCHAR(100),
+        Phone VARCHAR(15)
+    );
+
+    CREATE TABLE Tables (
+        TableID INT PRIMARY KEY,
+        RestaurantID INT,
+        Capacity INT,
+        IsAvailable BOOLEAN,
+        FOREIGN KEY (RestaurantID) REFERENCES Restaurant(RestaurantID)
+    );
+
+    CREATE TABLE Customers (
+        CustomerID INT PRIMARY KEY,
+        Name VARCHAR(50),
+        Email VARCHAR(50),
+        Phone VARCHAR(15)
+    );
+
+    CREATE TABLE Reservations (
+        ReservationID INT PRIMARY KEY,
+        TableID INT,
+        CustomerID INT,
+        ReservationTime DATETIME,
+        FOREIGN KEY (TableID) REFERENCES Tables(TableID),
+        FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+    );
+
+    CREATE TABLE Waiters (
+        WaiterID INT PRIMARY KEY,
+        Name VARCHAR(50),
+        RestaurantID INT,
+        FOREIGN KEY (RestaurantID) REFERENCES Restaurant(RestaurantID)
+    );
+
+
+    INSERT INTO Restaurant (RestaurantID, Name, Address, Phone)
+    VALUES
+        (1, 'The Grand Bistro', '123 Main St, Cityville', '+1234567890'),
+        (2, 'Taste of Italy', '456 Oak Ave, Townsville', '+0987654321'),
+        (3, 'Sushi Delight', '789 Elm St, Villageton', '+1112223333'),
+        (4, 'La Brasserie', '246 Maple St, Hamletown', '+4445556666'),
+        (5, 'Mediterranean Oasis', '879 Pine St, Groveside', '+7778889999'),
+        (6, 'Spice Kingdom', '369 Walnut St, Junction City', '+3334445555'),
+        (7, 'The Steakhouse', '654 Birch Ave, Riversville', '+6667778888'),
+        (8, 'Café Belle', '987 Cedar St, Hillside', '+2223334444'),
+        (9, 'Seafood Harbor', '741 Ocean Dr, Bayview', '+9990001111'),
+        (10, 'Pizzeria Roma', '321 Laurel St, Cliffside', '+8889990000');
+
+    INSERT INTO Tables (TableID, RestaurantID, Capacity, IsAvailable)
+    VALUES
+        (1, 1, 4, true),
+        (2, 1, 6, true),
+        (3, 2, 8, true),
+        (4, 3, 5, false),
+        (5, 4, 10, true),
+        (6, 5, 6, true),
+        (7, 6, 4, true),
+        (8, 7, 7, true),
+        (9, 8, 3, false),
+        (10, 9, 9, true);
+
+
+    INSERT INTO Customers (CustomerID, Name, Email, Phone)
+    VALUES
+        (1, 'John Doe', 'johndoe@email.com', '+1112223334'),
+        (2, 'Jane Smith', 'janesmith@email.com', '+2223334445'),
+        (3, 'Alex Johnson', 'alexjohnson@email.com', '+3334445556'),
+        (4, 'Emily Brown', 'emilybrown@email.com', '+4445556667'),
+        (5, 'Michael Wilson', 'michaelwilson@email.com', '+5556667778'),
+        (6, 'Olivia Miller', 'oliviamiller@email.com', '+6667778889'),
+        (7, 'William Garcia', 'williamgarcia@email.com', '+7778889990'),
+        (8, 'Sophia Martinez', 'sophiamartinez@email.com', '+8889990001'),
+        (9, 'Daniel Lee', 'daniellee@email.com', '+9990001112'),
+        (10, 'Ava Rodriguez', 'avarodriguez@email.com', '+1234567890');
+
+
+    INSERT INTO Reservations (ReservationID, TableID, CustomerID, ReservationTime)
+    VALUES
+        (1, 1, 1, '2023-12-15 18:00:00'),
+        (2, 2, 2, '2023-12-20 19:30:00'),
+        (3, 3, 3, '2023-12-18 20:00:00'),
+        (4, 4, 4, '2023-12-21 17:45:00'),
+        (5, 5, 5, '2023-12-16 19:15:00'),
+        (6, 6, 6, '2023-12-17 18:30:00'),
+        (7, 7, 7, '2023-12-19 19:00:00'),
+        (8, 8, 8, '2023-12-22 20:30:00'),
+        (9, 9, 9, '2023-12-18 18:45:00'),
+        (10, 10, 10, '2023-12-21 19:45:00');
+
+    INSERT INTO Waiters (WaiterID, Name, RestaurantID)
+    VALUES
+        (1, 'Mark Thompson', 1),
+        (2, 'Sarah Johnson', 2),
+        (3, 'Chris Brown', 3),
+        (4, 'Emma Davis', 4),
+        (5, 'Ryan Wilson', 5),
+        (6, 'Sophia Miller', 6),
+        (7, 'David Garcia', 7),
+        (8, 'Olivia Martinez', 8),
+        (9, 'Daniel Lee', 9),
+        (10, 'Ava Rodriguez', 10);
+
+-- Запросы к таблицам
+
+    1. Запрос на получение информации о ресторане
+    SELECT r.Name, r.Address, r.Phone
+    FROM Restaurant r
+    WHERE r.RestaurantID = 1
+
+    2. Запрос на выборку доступных столов
+    Select t.TableID, t.Capacity
+    FROM Tables t
+    WHERE t.IsAvailable = 1 AND t.RestaurantID = 2
+
+    3. Запрос на получение списка бронирований для ресторана
+    SELECT re.*
+    FROM Reservations re
+    JOIN Tables t ON re.TableID = t.TableID
+    WHERE t.RestaurantID = 3
+
+    4. Запрос на получение списка официантов для ресторана
+    SELECT w.WaiterID, w.Name
+    FROM Waiters w
+    WHERE w.RestaurantID = 4
+
+    5. Запрос на обновление данных о столике
+    UPDATE Tables
+    SET IsAvailable = 0
+    WHERE TableID = 5
+
+    6. Запрос на удаление клиента из базы данных
+    DELETE FROM Customers
+    WHERE CustomerID = 6
+    -- Не удалось выполнить запрос: "FOREIGN KEY constraint failed"
+
+    7. Запрос на получение информации о бронировании по идентификатору
+    SELECT *
+    FROM Reservations re
+    WHERE re.ReservationID = 7
+
+    8. Запрос на подсчет количества столов в ресторане
+    SELECT COUNT(t.TableID)
+    FROM Tables t
+    WHERE t.RestaurantID = 8
+
+    9. Запрос на выборку столов по вместимости
+    SELECT t.TableID, t.Capacity
+    FROM Tables t
+    WHERE t.Capacity >= 6
+
+    10. Запрос на поиск информации о клиенте по имени
+    SELECT *
+    FROM Customers c
+    WHERE c.Name LIKE "%John%"

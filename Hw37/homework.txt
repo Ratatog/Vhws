@@ -1,0 +1,266 @@
+-- Задача 1 =====================================
+
+-- Создание таблицы
+
+    CREATE TABLE Authors (
+        AuthorID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Name TEXT NOT NULL
+    );
+
+    CREATE TABLE Books (
+        BookID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Title TEXT NOT NULL,
+        AuthorID INTEGER,
+        FOREIGN KEY (AuthorID) REFERENCES Authors(AuthorID)
+    );
+
+    CREATE TABLE Members (
+        MemberID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Name TEXT NOT NULL,
+        Email TEXT UNIQUE
+    );
+
+    CREATE TABLE Loans (
+        LoanID INTEGER PRIMARY KEY AUTOINCREMENT,
+        BookID INTEGER,
+        MemberID INTEGER,
+        LoanDate DATE,
+        ReturnDate DATE,
+        FOREIGN KEY (BookID) REFERENCES Books(BookID),
+        FOREIGN KEY (MemberID) REFERENCES Members(MemberID)
+    );
+
+    INSERT INTO Authors (Name) VALUES ('Лев Толстой');
+    INSERT INTO Authors (Name) VALUES ('Фёдор Достоевский');
+
+    INSERT INTO Books (Title, AuthorID) VALUES ('Война и мир', 1);
+    INSERT INTO Books (Title, AuthorID) VALUES ('Анна Каренина', 1);
+    INSERT INTO Books (Title, AuthorID) VALUES ('Преступление и наказание', 2);
+
+    INSERT INTO Members (Name, Email) VALUES ('Иван Иванов', 'ivanov@example.com');
+    INSERT INTO Members (Name, Email) VALUES ('Мария Петрова', 'petrova@example.com');
+
+    INSERT INTO Loans (BookID, MemberID, LoanDate, ReturnDate) VALUES (1, 1, '2024-09-01', '2024-09-15');
+    INSERT INTO Loans (BookID, MemberID, LoanDate, ReturnDate) VALUES (2, 2, '2024-09-02', '2024-09-16');
+
+-- Запросы к таблице
+
+    1. Получить всех авторов
+    SELECT * FROM Authors;
+
+    2. Получить все книги
+    SELECT * FROM Books;
+
+    3. Получить всех членов библиотеки
+    SELECT * FROM Members;
+
+    4. Получить все заимствования
+    SELECT * FROM Loans;
+
+    5. Получить книги и их авторов
+    SELECT Books.Title, Authors.Name FROM Books
+    JOIN Authors ON Books.AuthorID = Authors.AuthorID;
+
+    6. Получить заимствования с информацией о книгах и членах
+    SELECT Loans.LoanID, Books.Title, Members.Name, Loans.LoanDate, Loans.ReturnDate 
+    FROM Loans
+    JOIN Books ON Loans.BookID = Books.BookID
+    JOIN Members ON Loans.MemberID = Members.MemberID;
+
+    7. Получить книги, которые заимствовал Иван Иванов
+    SELECT Books.Title FROM Loans
+    JOIN Books ON Loans.BookID = Books.BookID
+    JOIN Members ON Loans.MemberID = Members.MemberID
+    WHERE Members.Name = 'Иван Иванов';
+
+    8. Получить список всех книг, которые еще не были возвращены
+    SELECT Books.Title FROM Loans
+    JOIN Books ON Loans.BookID = Books.BookID
+    WHERE Loans.ReturnDate > DATE('now');
+
+    9. Получить количество книг у каждого автора
+    SELECT Authors.Name, COUNT(Books.BookID) AS BookCount FROM Authors
+    LEFT JOIN Books ON Authors.AuthorID = Books.AuthorID
+    GROUP BY Authors.AuthorID;
+
+    10. Получить список всех членов, которые заимствовали книги в сентябре 2024 года
+    SELECT DISTINCT Members.Name FROM Loans
+    JOIN Members ON Loans.MemberID = Members.MemberID
+    WHERE strftime('%Y-%m', Loans.LoanDate) = '2024-09';
+
+
+-- Задача 2 =====================================
+
+-- Запросы к таблице
+
+    1.	Запрос на получение всех студентов и курсов, на которые они записаны
+    SELECT s.first_name, s.last_name, c.course_name
+    FROM Students s JOIN Enrollments e ON s.id = e.student_id
+    JOIN Courses c ON e.course_id = c.id
+
+    2.	Запрос на получение всех курсов и преподавателей, которые их преподают
+    SELECT t.first_name, c.course_name
+    FROM Teachers t JOIN Schedule sc ON t.id = sc.teacher_id
+    JOIN Courses c on sc.course_id = c.id
+
+    3.	Запрос на получение всех записей студентов на курсы и их оценок
+    SELECT s.first_name, e.enrollment_date, e.grade
+    FROM Students s JOIN Enrollments e ON s.id = e.student_id
+
+    4.	Запрос на получение всех преподавателей и курсов, которые они ведут, включая курсы без преподавателей
+    SELECT t.first_name, c.course_name
+    FROM Teachers t LEFT JOIN Schedule sc ON t.id = sc.teacher_id
+    RIGHT JOIN Courses c ON sc.course_id = c.id
+
+    5.	Запрос на получение всех курсов и студентов, записанных на них, включая курсы без студентов
+    SELECT c.course_name, s.first_name
+    FROM Courses c LEFT JOIN Enrollments e ON c.id = e.course_id
+    LEFT JOIN Students s ON e.student_id = s.id
+
+    6.	Запрос на получение всех студентов и курсов, на которые они записаны, включая студентов без записей на курсы
+    SELECT s.first_name, c.course_name
+    FROM Students s LEFT JOIN Enrollments e ON s.id = e.student_id
+    LEFT JOIN Courses c ON e.course_id = c.id
+
+    7.	Запрос на получение всех курсов и расписания занятий по ним
+    SELECT c.course_name, sc.class_date
+    FROM Courses c LEFT JOIN Schedule sc ON c.id = sc.course_id
+
+    8.	Запрос на получение всех студентов и их оценок по курсам, включая студентов без оценок
+    SELECT s.first_name, e.grade
+    FROM Students s LEFT JOIN Enrollments e ON s.id = e.student_id
+
+    9.	Запрос на получение всех курсов и преподавателей, которые их ведут, включая курсы без преподавателей
+    SELECT c.course_name, t.first_name
+    FROM Courses c LEFT JOIN Schedule sc ON c.id = sc.course_id
+    LEFT JOIN Teachers t ON sc.teacher_id = t.id
+
+    10.	Запрос на получение всех преподавателей и курсов, которые они ведут, включая преподавателей без курсов
+    SELECT t.first_name, c.course_name
+    FROM Teachers t LEFT JOIN Schedule sc ON t.id = sc.teacher_id
+    LEFT JOIN Courses c ON sc.course_id = c.id;
+
+
+-- Задача 3 =====================================
+
+-- Создание таблицы
+
+    CREATE TABLE Users (
+        user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE Profiles (
+        profile_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        first_name TEXT,
+        last_name TEXT,
+        birth_date DATE,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    );
+
+    CREATE TABLE Posts (
+        post_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        title TEXT NOT NULL,
+        content TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    );
+
+    CREATE TABLE Comments (
+        comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        post_id INTEGER,
+        user_id INTEGER,
+        content TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (post_id) REFERENCES Posts(post_id),
+        FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    );
+
+    CREATE TABLE Categories (
+        category_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE
+    );
+
+    INSERT INTO Users (username, email, password) VALUES 
+    ('user1', 'user1@example.com', 'password1'),
+    ('user2', 'user2@example.com', 'password2'),
+    ('user3', 'user3@example.com', 'password3');
+
+    INSERT INTO Profiles (user_id, first_name, last_name, birth_date) VALUES 
+    (1, 'John', 'Doe', '1990-01-01'),
+    (2, 'Jane', 'Smith', '1992-02-02'),
+    (3, 'Alice', 'Johnson', '1995-03-03');
+
+    INSERT INTO Posts (user_id, title, content) VALUES 
+    (1, 'First Post', 'Content of the first post'),
+    (2, 'Second Post', 'Content of the second post'),
+    (3, 'Third Post', 'Content of the third post');
+
+    INSERT INTO Comments (post_id, user_id, content) VALUES 
+    (1, 2, 'Great post!'),
+    (2, 3, 'Very informative.'),
+    (3, 1, 'Thanks for sharing.');
+
+    INSERT INTO Categories (name) VALUES 
+    ('Technology'),
+    ('Science'),
+    ('Art');
+    
+
+-- Запросы к таблице
+    1.	Запрос на получение всех пользователей вместе с их профилями
+    SELECT Users.*, Profiles.first_name, Profiles.last_name, Profiles.birth_date
+    FROM Users
+    LEFT JOIN Profiles ON Users.user_id = Profiles.user_id
+
+    2.	Запрос на получение всех постов и их авторов
+    SELECT Posts.*, Users.username
+    FROM Posts
+    JOIN Users ON Posts.user_id = Users.user_id
+
+    3.	Запрос на получение всех комментариев вместе с постами, к которым они относятся
+    SELECT Comments.*, Posts.title
+    FROM Comments
+    JOIN Posts ON Comments.post_id = Posts.post_id
+
+    4.	Запрос на получение всех постов и их категорий
+    SELECT Posts.*, Categories.name
+    FROM Posts
+    LEFT JOIN Categories ON Posts.post_id = Categories.category_id
+
+    5.	Запрос на получение всех пользователей и их постов, включая пользователей, у которых нет постов
+    SELECT Users.*, Posts.title
+    FROM Users
+    LEFT JOIN Posts ON Users.user_id = Posts.user_id
+
+    6.	Запрос на получение всех постов и их комментариев, включая посты без комментариев
+    SELECT Posts.*, Comments.content
+    FROM Posts
+    LEFT JOIN Comments ON Posts.post_id = Comments.post_id
+
+    7.	Запрос на получение всех категорий и постов в каждой категории
+    SELECT Categories.name, Posts.title
+    FROM Categories
+    LEFT JOIN Posts ON Categories.category_id = Posts.post_id
+
+    8.	Запрос на получение всех комментариев и информации о постах, к которым они относятся, включая посты без комментариев
+    SELECT Posts.title, Comments.content
+    FROM Posts
+    LEFT JOIN Comments ON Posts.post_id = Comments.post_id
+
+    9.	Запрос на получение всех пользователей и их комментариев, включая пользователей, которые не оставляли комментарии
+    SELECT Users.username, Comments.content
+    FROM Users
+    LEFT JOIN Comments ON Users.user_id = Comments.user_id
+
+    10.	Запрос на получение всех постов и профилей их авторов, включая посты без профилей авторов
+    SELECT Posts.title, Profiles.first_name, Profiles.last_name
+    FROM Posts
+    LEFT JOIN Profiles ON Posts.user_id = Profiles.user_id
+    
