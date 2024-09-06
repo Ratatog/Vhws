@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="{% static "css/main.css" %}" />
+        <style>
+            .hashtag {
+                display:inline-block;
+                background-color: #eee;
+                padding: 0.2em 0.5em;
+                border-radius: 0.2em;
+                border: 1px solid black;
+                box-shadow: 0 0 0.2em black;
+                font-size: 0.5em;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Каталог постов</h1>
+        {% comment "" %} Цикл шаблона {% endcomment %}
+        {% for post in posts %}
+            <hr>
+            <p>Title: {{ post.title }}</p>
+            {% comment %} {% if post.is_published == True %} {% endcomment %}
+            {% if post.is_published %}
+                <p style='color: green'>Опубликовано</p>
+            {% else %}
+                <p style='color: red'>Не опубликовано</p>
+            {% endif %}
+            <p>Slug: {{ post.slug }}</p>
+            {% comment %} Вложенный цикл для отрисовки тегов {% endcomment %}
+            {% for hashtag in post.hashtags %}
+                <p class='hashtag'>{{ hashtag }}</p>
+            {% endfor %}
+            {% comment "" %} Хардкод ссылки{% endcomment %}
+            <p><a href="post/{{ post.slug  }}">{{ post.title }}</a></p>
+
+            {% comment "" %} Без хардкода {% endcomment %}
+            <p>Ссылка с использование шаблонного тега <code>url:</code></p>
+            <a href={% url "post_by_slug" post.slug %}>{{ post.title }}</a>
+            <hr>
+        {% endfor %}
+
+        {% comment %}
+        <h1>Главная страница</h1>
+        <p>строка: {{ some_str }}</p>
+        <p>число: {{ some_int }}</p>
+        <p>список: {{ some_list }}</p>
+        <p>список: {{ some_list.0 }}</p>
+        <p>словарь: {{ some_dict }}</p>
+        <p>словрь, ключ: {{ some_dict.fruit }}</p>
+        <p>объект: {{ data }}</p>
+        <p>объект.поле: {{ data.name }}</p>
+        <p>объект.метод: {{ data.method }}</p>
+        {% endcomment %}
+        
+        {% comment %}
+        Попробуем на JS достать содержимое переменной some_str
+        и вывести его в консоль браузера.
+        <script>
+            let someStr = "{{ some_str }}"
+            console.log(someStr)
+        </script>
+        {% endcomment %}
+    </body>
+</html>
